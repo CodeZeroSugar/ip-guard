@@ -1,7 +1,10 @@
 package main
 
 import (
+	"bytes"
+	"encoding/json"
 	"fmt"
+	"io"
 	"log"
 	"net/http"
 	"net/url"
@@ -39,6 +42,17 @@ func main() {
 	if err != nil {
 		log.Fatalf("%s", err)
 	}
+	defer resp.Body.Close()
 
-	fmt.Println(resp)
+	body, err := io.ReadAll(resp.Body)
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	var prettyPrint bytes.Buffer
+	if err := json.Indent(&prettyPrint, body, "", "		"); err != nil {
+		log.Fatal(err)
+	}
+
+	fmt.Println(prettyPrint.String())
 }
