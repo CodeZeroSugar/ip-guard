@@ -13,9 +13,9 @@ import (
 	"github.com/joho/godotenv"
 )
 
-const TEST_IP = "147.185.132.120"
-
 func main() {
+	ipArg := os.Args[1:]
+	ip := ipArg[0]
 	godotenv.Load()
 	apiURL := os.Getenv("API_URL")
 	apiKey := os.Getenv("ABUSEIP_KEY")
@@ -23,7 +23,7 @@ func main() {
 	checkURL := apiURL + "/check"
 
 	params := url.Values{}
-	params.Add("ipAddress", TEST_IP)
+	params.Add("ipAddress", ip)
 	params.Add("maxAgeInDays", "90")
 
 	fullURL := fmt.Sprintf("%s?%s", checkURL, params.Encode())
