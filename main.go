@@ -4,10 +4,7 @@ import (
 	"bytes"
 	"encoding/json"
 	"fmt"
-	"io"
 	"log"
-	"net/http"
-	"net/url"
 	"os"
 
 	"github.com/joho/godotenv"
@@ -17,36 +14,21 @@ func main() {
 	ipArg := os.Args[1:]
 	ip := ipArg[0]
 	godotenv.Load()
-	apiURL := os.Getenv("API_URL")
 	apiKey := os.Getenv("ABUSEIP_KEY")
 
-	checkURL := apiURL + "/check"
-
-	params := url.Values{}
-	params.Add("ipAddress", ip)
-	params.Add("maxAgeInDays", "90")
-
-	fullURL := fmt.Sprintf("%s?%s", checkURL, params.Encode())
-
-	client := &http.Client{}
-
-	req, err := http.NewRequest("GET", fullURL, nil)
-	if err != nil {
-		log.Fatalf("%s", err)
+	params := map[string]string{
+		"ipAddress":    ip,
+		"maxAgeInDays": "90",
 	}
 
-	req.Header.Set("Accept", "application/json")
-	req.Header.Set("Key", apiKey)
+	cfg, err := newConfig(apiKey, "check", params)
+	if err != nil {
+		log.Fatalf("failed to create api config: %s", err)
+	}
 
-	resp, err := client.Do(req)
+	body, err := cfg.abusedClient.FetchIPData(cfg.fullURL, cfg.apiKey)
 	if err != nil {
 		log.Fatalf("%s", err)
-	}
-	defer resp.Body.Close()
-
-	body, err := io.ReadAll(resp.Body)
-	if err != nil {
-		log.Fatal(err)
 	}
 
 	var prettyPrint bytes.Buffer
