@@ -7,14 +7,24 @@ import (
 	"log"
 	"os"
 
+	"github.com/CodeZeroSugar/ip-guard/internal/process"
+	"github.com/CodeZeroSugar/ip-guard/internal/scanner"
 	"github.com/joho/godotenv"
 )
 
 func main() {
-	ipArg := os.Args[1:]
-	ip := ipArg[0]
+	scanner := scanner.IPScanner{Runner: process.OSRunner{}}
+	scanResults, err := scanner.GetRemoteIPs()
+	if err != nil {
+		log.Fatalf("scanner failed to obtain remote connections: %s", err)
+	}
+
 	godotenv.Load()
 	apiKey := os.Getenv("ABUSEIP_KEY")
+	params := make(map[string]string)
+
+	for ip := range scanResults {
+	}
 
 	params := map[string]string{
 		"ipAddress":    ip,

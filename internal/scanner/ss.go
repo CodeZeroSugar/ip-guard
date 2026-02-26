@@ -11,11 +11,11 @@ import (
 )
 
 type IPScanner struct {
-	runner process.Runner
+	Runner process.Runner
 }
 
 func (i *IPScanner) GetRemoteIPs() (map[string][]string, error) {
-	output, err := i.runner.Run("ss", "-tunp")
+	output, err := i.Runner.Run("ss", "-tunp")
 	if err != nil {
 		return nil, err
 	}

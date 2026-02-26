@@ -7,7 +7,7 @@ import (
 )
 
 func TestGetRemoteIPs(t *testing.T) {
-	i := IPScanner{runner: process.OSRunner{}}
+	i := IPScanner{Runner: process.OSRunner{}}
 
 	results, err := i.GetRemoteIPs()
 	if err != nil {
